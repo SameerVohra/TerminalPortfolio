@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import projects from "../assets/projects.json"
+import projects from "../assets/projects.json";
 
 interface CommandInterface {
   command: string;
@@ -11,6 +11,8 @@ function Terminal() {
   const [cmd, setCmd] = useState<string[]>([]);
   const terminalRef = useRef<HTMLDivElement | null>(null);
   const [output, setOutput] = useState<string[]>([]);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
   const commands: CommandInterface[] = [
     { command: "help", output: "get all commands" },
     { command: "clear", output: "clear terminal" },
@@ -22,12 +24,11 @@ function Terminal() {
     { command: "gui", output: "go to gui portfolio" },
   ];
 
- 
-const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-  if (e.code === "Enter") {
-    setCmd((prev) => [...prev, command]);
-    executeCommand(command);
-    setCommand("");
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.code === "Enter") {
+      setCmd((prev) => [...prev, command]);
+      executeCommand(command);
+      setCommand("");
     }
 
     if (e.code === "ArrowUp" || e.code === "ArrowDown") {
@@ -36,50 +37,52 @@ const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     }
   };
 
-  
-const executeCommand = (command: string) => {
-  let output: string = "";
-  const gitCommandRegex = /^projects git (\d+)$/;
-  const liveCommandRegex = /^projects live (\d+)$/;
+  const executeCommand = (command: string) => {
+    let output: string = "";
+    const gitCommandRegex = /^projects git (\d+)$/;
+    const liveCommandRegex = /^projects live (\d+)$/;
 
-  const gitMatch = command.match(gitCommandRegex);
-  const liveMatch = command.match(liveCommandRegex);
+    const gitMatch = command.match(gitCommandRegex);
+    const liveMatch = command.match(liveCommandRegex);
 
-  // Check for git or live command
-  if (gitMatch || liveMatch) {
-    const projectIndex = gitMatch ? parseInt(gitMatch[1], 10) - 1 : liveMatch ? parseInt(liveMatch[1], 10) - 1 : -1;
+    // Check for git or live command
+    if (gitMatch || liveMatch) {
+      const projectIndex = gitMatch
+        ? parseInt(gitMatch[1], 10) - 1
+        : liveMatch
+        ? parseInt(liveMatch[1], 10) - 1
+        : -1;
 
-    if (projectIndex < 0 || projectIndex >= projects.projects.length) {
-      setOutput((prev) => [...prev, "Index out of bounds..."]);
+      if (projectIndex < 0 || projectIndex >= projects.projects.length) {
+        setOutput((prev) => [...prev, "Index out of bounds..."]);
+      } else {
+        if (gitMatch) {
+          console.log("Opening GitHub Repo");
+          setOutput((prev) => [...prev, "Opening GitHub Repo..."]);
+          window.open(projects.projects[projectIndex].gitLink)?.focus();
+        } else if (liveMatch) {
+          console.log("Opening Live Link");
+          setOutput((prev) => [...prev, "Opening Live Link..."]);
+          window.open(projects.projects[projectIndex].liveLink)?.focus();
+        }
+      }
     } else {
-      if (gitMatch) {
-        console.log("Opening GitHub Repo");
-        setOutput((prev) => [...prev, "Opening GitHub Repo..."]);
-        window.open(projects.projects[projectIndex].gitLink)?.focus();
-      } else if (liveMatch) {
-        console.log("Opening Live Link");
-        setOutput((prev) => [...prev, "Opening Live Link..."]);
-        window.open(projects.projects[projectIndex].liveLink)?.focus();
-      }
-    }
-  } else {
-    // Handle other commands
-    commands.forEach((c) => {
-      if (c.command === command) {
-        output = c.output;
-      }
-    });
+      // Handle other commands
+      commands.forEach((c) => {
+        if (c.command === command) {
+          output = c.output;
+        }
+      });
 
-    if (command === "socials go to 1") getOutput("github");
-    if (command === "socials go to 2") getOutput("X");
-    if (command === "socials go to 3") getOutput("linkedin");
-    getOutput(output);
-  }
-};
+      if (command === "socials go to 1") getOutput("github");
+      if (command === "socials go to 2") getOutput("X");
+      if (command === "socials go to 3") getOutput("linkedin");
+      getOutput(output);
+    }
+  };
 
   const getOutput = (output: string) => {
     switch (output) {
-
       case "get all commands":
         getCommands();
         break;
@@ -97,51 +100,58 @@ const executeCommand = (command: string) => {
         break;
 
       case "about me":
-        const about = "Hi, my name is Sameer Vohra \n I'm a Final Year student at Chitkara University \n I'm a passionate about writing code and solving real-life problems"
-        setOutput((prev)=>[...prev, about])
+        const about =
+          "Hi, my name is Sameer Vohra \n I'm a Final Year student at Chitkara University \n I'm passionate about writing code and solving real-life problems";
+        setOutput((prev) => [...prev, about]);
         break;
 
       case "my education":
-        const education = `B.E in Computer Science Engineering\n\t- Chitkara University (2021-2025)\n\t- CGPA: 9.29/10\n12th Grade\n\t- Delhi Public School\n\t- Percentage: 74.2%\n10th Grade\n\t- Delhi Public School\n\t- Percentage: 84.2%
-          `;
-          setOutput((prev)=>[...prev, education]);
-          break;
+        const education = `B.E in Computer Science Engineering\n\t- Chitkara University (2021-2025)\n\t- CGPA: 9.29/10\n12th Grade\n\t- Delhi Public School\n\t- Percentage: 74.2%\n10th Grade\n\t- Delhi Public School\n\t- Percentage: 84.2%`;
+        setOutput((prev) => [...prev, education]);
+        break;
 
       case "all social profiles":
-        const socials = "1. Github \n2. X(Twitter) \n3. Linkedin \n\t\- Usage: socials go to <social no.> \n\t- eg: socials go to 1"
-        setOutput((prev)=>[...prev, socials]);
+        const socials =
+          "1. Github \n2. X(Twitter) \n3. Linkedin \n\t\- Usage: socials go to <social no.> \n\t- eg: socials go to 1";
+        setOutput((prev) => [...prev, socials]);
         break;
 
       case "github":
         window.open("https://github.com/SameerVohra", "_blank")?.focus();
-        setOutput((prev)=>[...prev, "Opening github...."]);
+        setOutput((prev) => [...prev, "Opening github...."]);
         break;
 
       case "X":
         window.open("https://x.com/__sameervohra__", "_blank")?.focus();
-        setOutput((prev)=>[...prev, "Opening X...."]);
+        setOutput((prev) => [...prev, "Opening X...."]);
         break;
 
       case "linkedin":
         window.open("https://www.linkedin.com/in/sameer-vohra/", "_blank")?.focus();
-        setOutput((prev)=>[...prev, "Opening Linkedin...."]);
-        break
+        setOutput((prev) => [...prev, "Opening Linkedin...."]);
+        break;
 
       case "get all projects":
-        const pName = projects.projects.map((p, idx)=>`${idx+1}: ${p.name} \n\t Github: ${p.gitLink} \n\t Live Link: ${p.liveLink}\n`).join("\n")
-        const instruction = pName+"\nUsage: projects git <project no.> OR projects live <project no.> \n\t - eg: projects git 12\n\t\t projects live 12"
-        setOutput((prev)=>[...prev, instruction])
+        const pName = projects.projects
+          .map(
+            (p, idx) =>
+              `${idx + 1}: ${p.name} \n\t Github: ${p.gitLink} \n\t Live Link: ${p.liveLink}\n`
+          )
+          .join("\n");
+        const instruction =
+          pName +
+          "\nUsage: projects git <project no.> OR projects live <project no.> \n\t - eg: projects git 12\n\t\t projects live 12";
+        setOutput((prev) => [...prev, instruction]);
         console.log(projects.projects);
         break;
 
       case "go to gui portfolio":
         window.open("https://sameervohra-portfolio.vercel.app/", "_blank")?.focus();
-        setOutput((prev)=>[...prev, "Opening GUI portfolio"])
+        setOutput((prev) => [...prev, "Opening GUI portfolio"]);
         break;
 
-
       default:
-        setOutput((prev)=>[...prev, "Command not found"])
+        setOutput((prev) => [...prev, "Command not found"]);
         break;
     }
   };
@@ -157,8 +167,16 @@ const executeCommand = (command: string) => {
     }
   }, [cmd, output]);
 
+  // Set focus on input box when the terminal is clicked
+  const handleTerminalClick = () => {
+    inputRef.current?.focus();
+  };
+
   return (
-    <div className="h-screen w-full flex justify-center items-center overflow-auto shadow-2xl shadow-red-500">
+    <div
+      className="h-screen w-full flex justify-center items-center overflow-auto shadow-2xl shadow-red-500"
+      onClick={handleTerminalClick}
+    >
       <div className="border-2 border-black h-3/4 w-3/4 bg-gray-900 rounded-lg flex flex-col">
         {/* Header */}
         <div className="border-2 bg-black border-black h-8 w-full flex justify-end items-center space-x-1">
@@ -168,8 +186,7 @@ const executeCommand = (command: string) => {
         </div>
 
         {/* Terminal Body */}
-        <div className="flex-1 overflow-y-auto p-5 bg-pink-900">
-          
+        <div className="flex-1 overflow-y-auto p-5 bg-pink-900" ref={terminalRef}>
           {cmd.map((c, idx) => (
             <div key={idx}>
               <p className="text-green-500 font-bold">
@@ -186,24 +203,22 @@ const executeCommand = (command: string) => {
             </div>
           ))}
 
-          
           <div>
             <p className="text-green-500 font-bold flex items-center">
               <span className="text-white">&#62; </span>Guest
               <span className="text-white">@</span>SameerVohraPortfolio:{" "}
               <span className="text-white">~$</span>{" "}
               <input
-                value={command}
+                className="outline-none bg-transparent text-lg text-gray-300 font-mono w-auto ml-2"
                 type="text"
-                placeholder="help, about, projects, socials, ....."
-                className="w-full outline-none text-white font-mono bg-transparent ml-2"
-                onChange={(e) => setCommand(e.currentTarget.value)}
+                value={command}
+                onChange={(e) => setCommand(e.target.value)}
                 onKeyDown={handleKeyPress}
+                autoFocus
+                ref={inputRef}
               />
             </p>
-            <div ref={terminalRef}></div>
           </div>
-          <div ref={terminalRef}></div>
         </div>
       </div>
     </div>
