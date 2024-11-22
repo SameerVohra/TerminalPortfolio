@@ -216,6 +216,7 @@ function Terminal() {
                 onKeyDown={handleKeyPress}
                 autoFocus
                 ref={inputRef}
+                placeholder="help, about, projects, socials, ....."
               />
             </p>
           </div>
