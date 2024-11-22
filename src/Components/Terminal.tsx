@@ -57,11 +57,9 @@ function Terminal() {
         setOutput((prev) => [...prev, "Index out of bounds..."]);
       } else {
         if (gitMatch) {
-          console.log("Opening GitHub Repo");
           setOutput((prev) => [...prev, "Opening GitHub Repo..."]);
           window.open(projects.projects[projectIndex].gitLink)?.focus();
         } else if (liveMatch) {
-          console.log("Opening Live Link");
           setOutput((prev) => [...prev, "Opening Live Link..."]);
           window.open(projects.projects[projectIndex].liveLink)?.focus();
         }
@@ -142,7 +140,6 @@ function Terminal() {
           pName +
           "\nUsage: projects git <project no.> OR projects live <project no.> \n\t - eg: projects git 12\n\t\t projects live 12";
         setOutput((prev) => [...prev, instruction]);
-        console.log(projects.projects);
         break;
 
       case "go to gui portfolio":
@@ -216,7 +213,7 @@ function Terminal() {
                 onKeyDown={handleKeyPress}
                 autoFocus
                 ref={inputRef}
-                placeholder="help, about, projects, socials, ....."
+                placeholder= "help, about, projects, socials....."
               />
             </p>
           </div>
