@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import React, { FormEventHandler, useEffect, useRef, useState } from "react";
 import projects from "../assets/projects.json";
 
 interface CommandInterface {
@@ -9,7 +9,7 @@ interface CommandInterface {
 function Terminal() {
   const [command, setCommand] = useState<string>("");
   const [cmd, setCmd] = useState<string[]>([]);
-  const terminalRef = useRef<HTMLDivElement | null>(null);
+  const terminalEndRef = useRef<HTMLDivElement | null>(null);
   const [output, setOutput] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -24,6 +24,7 @@ function Terminal() {
     { command: "gui", output: "go to gui portfolio" },
   ];
 
+
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.code === "Enter") {
       setCmd((prev) => [...prev, command]);
@@ -32,7 +33,7 @@ function Terminal() {
     }
 
     if (e.code === "ArrowUp" || e.code === "ArrowDown") {
-      const newIndex = e.code === "ArrowUp" ? cmd.length - 1 : 0; // Example for basic navigation
+      const newIndex = e.code === "ArrowUp" ? cmd.length - 1 : 0;
       setCommand(cmd[newIndex] || "");
     }
   };
@@ -45,7 +46,6 @@ function Terminal() {
     const gitMatch = command.match(gitCommandRegex);
     const liveMatch = command.match(liveCommandRegex);
 
-    // Check for git or live command
     if (gitMatch || liveMatch) {
       const projectIndex = gitMatch
         ? parseInt(gitMatch[1], 10) - 1
@@ -54,7 +54,7 @@ function Terminal() {
         : -1;
 
       if (projectIndex < 0 || projectIndex >= projects.projects.length) {
-        setOutput((prev) => [...prev, "Index out of bounds..."]);
+        setOutput((prev) => [...prev, "Command not found"]);
       } else {
         if (gitMatch) {
           setOutput((prev) => [...prev, "Opening GitHub Repo..."]);
@@ -65,7 +65,6 @@ function Terminal() {
         }
       }
     } else {
-      // Handle other commands
       commands.forEach((c) => {
         if (c.command === command) {
           output = c.output;
@@ -154,17 +153,14 @@ function Terminal() {
   };
 
   const getCommands = () => {
-    const allCommands = commands.map((c) => c.command).join("\n");
+    const allCommands = commands.map((c) => `${c.command}: ${c.output}`).join("\n");
     setOutput((prev) => [...prev, allCommands]);
   };
 
   useEffect(() => {
-    if (terminalRef.current) {
-      terminalRef.current.scrollIntoView({ behavior: "smooth" });
-    }
+    terminalEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [cmd, output]);
 
-  // Set focus on input box when the terminal is clicked
   const handleTerminalClick = () => {
     inputRef.current?.focus();
   };
@@ -175,15 +171,12 @@ function Terminal() {
       onClick={handleTerminalClick}
     >
       <div className="border-2 border-black h-3/4 w-3/4 bg-gray-900 rounded-lg flex flex-col">
-        {/* Header */}
         <div className="border-2 bg-black border-black h-8 w-full flex justify-end items-center space-x-1">
           <div className="border border-black bg-yellow-300 h-4 w-4 rounded-full hover:cursor-pointer"></div>
           <div className="border border-black bg-green-400 h-4 w-4 rounded-full hover:cursor-pointer"></div>
           <div className="border border-black bg-red-600 h-4 w-4 rounded-full hover:cursor-pointer mr-2"></div>
         </div>
-
-        {/* Terminal Body */}
-        <div className="flex-1 overflow-y-auto p-5 bg-pink-900" ref={terminalRef}>
+        <div className="flex-1 overflow-y-auto p-5 bg-pink-900">
           {cmd.map((c, idx) => (
             <div key={idx}>
               <p className="text-green-500 font-bold">
@@ -199,25 +192,22 @@ function Terminal() {
               )}
             </div>
           ))}
-
           <div>
             <p className="text-green-500 font-bold flex items-center">
               <span className="text-white">&#62; </span>Guest
               <span className="text-white">@</span>SameerVohraPortfolio:{" "}
               <span className="text-white">~$</span>{" "}
               <input
-                className="outline-none bg-transparent text-lg text-gray-300 font-mono w-auto ml-2"
-                type="text"
+                className="outline-none bg-transparent text-lg text-gray-300 w-full ml-2"
                 value={command}
-                onChange={(e) => setCommand(e.target.value)}
-                onKeyDown={handleKeyPress}
-                autoFocus
                 ref={inputRef}
-                placeholder= "help, about, projects, socials....."
+                onKeyDown={handleKeyPress}
+                onChange={(e) => setCommand(e.target.value)}
+                placeholder="help, about, projects, socials....."
               />
             </p>
-            <div ref={terminalRef}></div>
           </div>
+          <div ref={terminalEndRef}></div>
         </div>
       </div>
     </div>
