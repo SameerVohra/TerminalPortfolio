@@ -59,7 +59,7 @@ function Terminal() {
         if (gitMatch) {
           setOutput((prev) => [...prev, "Opening GitHub Repo..."]);
           window.open(projects.projects[projectIndex].gitLink)?.focus();
-        } else if (liveMatch) {
+        } else if(liveMatch) {
           setOutput((prev) => [...prev, "Opening Live Link..."]);
           window.open(projects.projects[projectIndex].liveLink)?.focus();
         }
@@ -74,6 +74,8 @@ function Terminal() {
       if (command === "socials go to 1") getOutput("github");
       if (command === "socials go to 2") getOutput("X");
       if (command === "socials go to 3") getOutput("linkedin");
+      if (command === "socials go to 4") getOutput("leetcode");
+
       getOutput(output);
     }
   };
@@ -109,7 +111,7 @@ function Terminal() {
 
       case "all social profiles":
         const socials =
-          "1. Github \n2. X(Twitter) \n3. Linkedin \n\t\- Usage: socials go to <social no.> \n\t- eg: socials go to 1";
+          "1. Github \n2. X(Twitter) \n3. Linkedin \n4. Leetcode \n\t\- Usage: socials go to <social no.> \n\t- eg: socials go to 1";
         setOutput((prev) => [...prev, socials]);
         break;
 
@@ -126,6 +128,11 @@ function Terminal() {
       case "linkedin":
         window.open("https://www.linkedin.com/in/sameer-vohra/", "_blank")?.focus();
         setOutput((prev) => [...prev, "Opening Linkedin...."]);
+        break;
+
+      case "leetcode":
+        window.open("https://leetcode.com/u/Sameer_Vohra/", "_blank")?.focus();
+        setOutput((prev)=>[...prev, "Opening Leetcode...."]);
         break;
 
       case "get all projects":
