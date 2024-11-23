@@ -218,7 +218,6 @@ function Terminal() {
             </p>
             <div ref={terminalRef}></div>
           </div>
-          <div ref={terminalRef}></div>
         </div>
       </div>
     </div>
