@@ -216,7 +216,9 @@ function Terminal() {
                 placeholder= "help, about, projects, socials....."
               />
             </p>
+            <div ref={terminalRef}></div>
           </div>
+          <div ref={terminalRef}></div>
         </div>
       </div>
     </div>
