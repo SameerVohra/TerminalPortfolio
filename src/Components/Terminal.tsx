@@ -1,4 +1,4 @@
-import React, { FormEventHandler, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import projects from "../assets/projects.json";
 
 interface CommandInterface {
